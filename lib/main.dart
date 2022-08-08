@@ -1,3 +1,4 @@
+import 'package:floges_employees/bloc/auth_bloc/auth_bloc.dart';
 import 'package:floges_employees/bloc/employee_bloc/employee_bloc.dart';
 import 'package:floges_employees/bloc/hive_bloc/hive_bloc.dart';
 import 'package:floges_employees/di/injectable.dart';
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
         providers: [
           BlocProvider<EmployeeBloc>(create: (ctx) => getIt<EmployeeBloc>()),
           BlocProvider<HiveBloc>(create: (ctx) => getIt<HiveBloc>()),
+          BlocProvider<AuthBloc>(create: (ctx) => getIt<AuthBloc>()),
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,

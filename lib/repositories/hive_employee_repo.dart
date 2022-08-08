@@ -25,7 +25,6 @@ class HiveEmployeeRepo implements IHiveEmployeesRepo {
     try {
       final box = Boxes.getEmployees();
       List<Employee> employees = box.values.toList();
-      log(employees.toString());
       return Right(employees);
     } catch (e) {
       return const Left(Failure.server());

@@ -1,5 +1,12 @@
+import 'dart:developer';
+
+import 'package:dartz/dartz.dart';
+import 'package:floges_employees/bloc/auth_bloc/auth_bloc.dart';
+import 'package:floges_employees/models/auth_cred.dart';
+import 'package:floges_employees/models/failures/failure.dart';
 import 'package:floges_employees/views/employees.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 
 class Login extends StatelessWidget {
@@ -10,6 +17,8 @@ class Login extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    _usernameController.text = 'eve.holt@reqres.in';
+    _passwordController.text = 'cityslicka';
     return Scaffold(
       body: SizedBox(
         height: 100.h,
@@ -38,16 +47,37 @@ class Login extends StatelessWidget {
                 obscuringCharacter: ".",
               ),
               SizedBox(height: 4.h),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Employees(),
-                    ),
-                  );
+              BlocListener<AuthBloc, AuthState>(
+                listener: (context, state) {
+                  state.loginFailureOrSuccess.fold(() {}, (result) {
+                    result.fold(
+                      (failure) {
+                        //show snackbar
+                        Scaffold.of(context).showSnackBar(const SnackBar(
+                          content: Text("Something went wrong"),
+                        ));
+                      },
+                      (success) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Employees(),
+                          ),
+                        );
+                      },
+                    );
+                  });
                 },
-                child: const Text("Login"),
+                child: ElevatedButton(
+                  onPressed: () {
+                    AuthCredential authCredential = AuthCredential(
+                        email: _usernameController.text,
+                        password: _passwordController.text);
+                    BlocProvider.of<AuthBloc>(context)
+                        .add(AuthEvent.login(authCredential));
+                  },
+                  child: const Text("Login"),
+                ),
               )
             ],
           ),
